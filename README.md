@@ -29,15 +29,16 @@ With this sample app, you can:
 
 2. Download this project.
 
-3. Fill in the App ID in *config.js* in the *utils* folder of this project:
+3. Fill in the AppID and TOKEN in *config.js* in the *utils* folder of this project:
 
     	const APPID = 'abcdefg'
+    	const TOKEN = 'some token'
 
 4. Contact contact@finogeeks.com / sales@agora.io  to abtain the Agora Miniapp SDK, and rename the SDK to "mini-app-sdk-production.js".
 
 5. Save the "mini-app-sdk-production.js" under the *lib* folder of this project.
 
-6. Start the WeChat Developer Tool and import this project.
+6. Start the Developer Tool and import this project.
 
 7. Enter a channel name and join a channel. Invite your friend to join in the same channel and you will be able to see each other.
 
