@@ -1,3 +1,4 @@
+const app = getApp()
 const Utils = require('../../utils/util.js')
 const { APPID, setToken } = require("../../utils/config.js");
 
@@ -29,26 +30,6 @@ Page({
         userInfo: userInfo
       });
     }
-
-    wx.request({
-      url: 'https://finogeeks-tools.finogeeks.club/test-report/agora/token',
-      method: 'post',
-      data: {
-        appId: APPID,
-        channel: 'finclip'
-      },
-      success(res) {
-        if (res.statusCode === 200 && res.data.token) {
-          setToken(res.data.token)
-        } else {
-          wx.showToast({
-            title: `获取 token 失败`,
-            icon: 'none',
-            duration: 5000
-          })
-        }
-      }
-    })
   },
 
   /**
@@ -118,38 +99,62 @@ Page({
         duration: 2000
       })
     } else {
-      if(this.checkJoinLock()) {
-        this.lockJoin();
-        if (value === "agora") {
-          // go to test page if channel name is agora
-          wx.navigateTo({
-            url: `../test/test`
-          });
-        } else if (value === "agora2") {
-          // go to test page if channel name is agora
-          wx.navigateTo({
-            url: `../test2/test2`
-          });
-        } else {
-          wx.showModal({
-            title: '是否推流',
-            content: '选择取消则作为观众加入，观众模式不推流',
-            showCancel: true,
-            success: function (res) {
-              let role = "audience";
-              if (res.confirm) {
-                role = "broadcaster";
-              }
-
-              wx.navigateTo({
-                url: `../meeting/meeting?channel=${value}&uid=${uid}&role=${role}`
-              });
-            }
-          })
+      wx.request({
+        url: 'https://finogeeks-tools.finogeeks.club/test-report/agora/token',
+        method: 'post',
+        data: {
+          appId: APPID,
+          channel: value
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.token) {
+            setToken(res.data.token);
+            this.joinRoom(value, uid);
+          } else {
+            wx.showToast({
+              title: `获取 token 失败`,
+              icon: 'none',
+              duration: 5000
+            })
+          }
         }
+      })
+    }
+  },
+
+  joinRoom: function(channel, uid) {
+    if(this.checkJoinLock()) {
+      this.lockJoin();
+      if (channel === "agora") {
+        // go to test page if channel name is agora
+        wx.navigateTo({
+          url: `../test/test`
+        });
+      } else if (channel === "agora2") {
+        // go to test page if channel name is agora
+        wx.navigateTo({
+          url: `../test2/test2`
+        });
+      } else {
+        wx.showModal({
+          title: '是否推流',
+          content: '选择取消则作为观众加入，观众模式不推流',
+          showCancel: true,
+          success: function (res) {
+            let role = "audience";
+            if (res.confirm) {
+              role = "broadcaster";
+            }
+
+            wx.navigateTo({
+              url: `../meeting/meeting?channel=${channel}&uid=${uid}&role=${role}`
+            });
+          }
+        })
       }
     }
   },
+
   onInputChannel: function (e) {
     let value = e.detail.value;
     this.channel = value;
