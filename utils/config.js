@@ -1,5 +1,5 @@
 const APPID = "1fa54c6d47074eea98833162a292497a";
-const TOKEN = "";
+let token = '';
 
 if(APPID === ""){
   wx.showToast({
@@ -11,5 +11,10 @@ if(APPID === ""){
 
 module.exports = {
   APPID: APPID,
-  TOKEN: TOKEN
+  getToken() {
+    return token;
+  },
+  setToken(val) {
+    token = val;
+  }
 }

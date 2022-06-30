@@ -1,5 +1,5 @@
-const app = getApp()
 const Utils = require('../../utils/util.js')
+const { APPID, setToken } = require("../../utils/config.js");
 
 // pages/index/index.js.js
 Page({
@@ -29,6 +29,26 @@ Page({
         userInfo: userInfo
       });
     }
+
+    wx.request({
+      url: 'https://finogeeks-tools.finogeeks.club/test-report/agora/token',
+      method: 'post',
+      data: {
+        appId: APPID,
+        channel: 'finclip'
+      },
+      success(res) {
+        if (res.statusCode === 200 && res.data.token) {
+          setToken(res.data.token)
+        } else {
+          wx.showToast({
+            title: `获取 token 失败`,
+            icon: 'none',
+            duration: 5000
+          })
+        }
+      }
+    })
   },
 
   /**

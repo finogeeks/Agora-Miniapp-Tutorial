@@ -4,11 +4,10 @@ const Utils = require('../../utils/util.js')
 // 微信平台 SDK
 // const AgoraMiniappSDK = require("../../lib/mini-app-sdk-production.js");
 // 凡泰平台 SDK
-const AgoraMiniappSDK = require("../../lib/finclip-agora-client-sdk.js");
+const AgoraMiniappSDK = require("../../lib/finclip-agora-client-sdk");
 const max_user = 10;
 const Layouter = require("../../utils/layout.js");
-const APPID = require("../../utils/config.js").APPID;
-const TOKEN = require("../../utils/config.js").TOKEN;
+const { APPID, getToken } = require("../../utils/config.js");
 
 /**
  * log relevant, remove these part and relevant code if not needed
@@ -558,13 +557,10 @@ Page({
       let client = {}
       if (this.testEnv) {
         client = new AgoraMiniappSDK.Client({
-          debug: true,
           servers: ["wss://miniapp.agoraio.cn/120-131-14-112/api"]
         });
       } else {
-        client = new AgoraMiniappSDK.Client({
-          debug: true
-        })
+        client = new AgoraMiniappSDK.Client()
       }
       //subscribe stream events
       this.subscribeEvents(client);
@@ -576,8 +572,7 @@ Page({
       this.client = client;
       client.init(APPID, () => {
         Utils.log(`client init success`);
-        // pass key instead of undefined if certificate is enabled
-        client.join(TOKEN, channel, uid, () => {
+        client.join(getToken(), channel, uid, () => {
           client.setRole(this.role);
           Utils.log(`client join channel success`);
           //and get my stream publish url
@@ -629,7 +624,7 @@ Page({
         Utils.log(`client init success`);
         // pass key instead of undefined if certificate is enabled
         Utils.log(`rejoin with uids: ${JSON.stringify(uids)}`);
-        client.rejoin(TOKEN, channel, uid, uids, () => {
+        client.rejoin(getToken(), channel, uid, uids, () => {
           Utils.log(`client join channel success`);
           if (this.isBroadcaster()) {
             client.publish(url => {
